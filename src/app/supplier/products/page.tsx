@@ -59,6 +59,7 @@ export default async function SupplierProductsPage() {
               <th className="border border-gray-300 p-3 text-left">加工方法</th>
               <th className="border border-gray-300 p-3 text-right">価格</th>
               <th className="border border-gray-300 p-3 text-right">在庫</th>
+              <th className="border border-gray-300 p-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +74,14 @@ export default async function SupplierProductsPage() {
                   <span className={product.stock_quantity === 0 ? "text-red-500" : "text-green-600"}>
                     {product.stock_quantity}
                   </span>
+                </td>
+                <td className="border border-gray-300 p-3 text-center">
+                  <div className="flex gap-2 justify-center">
+                    <Link href={`/supplier/products/${product.id}/edit`}
+                      className="text-blue-600 hover:underline text-sm">編集</Link>
+                    <Link href={`/supplier/products/${product.id}/stock`}
+                      className="text-green-600 hover:underline text-sm">在庫</Link>
+                  </div>
                 </td>
               </tr>
             ))}

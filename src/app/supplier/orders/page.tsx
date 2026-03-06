@@ -1,5 +1,6 @@
 // T9: サプライヤー注文一覧画面 /supplier/orders
 // DBを直接参照してsupplier_id=1が受けた注文一覧を表示する
+import Link from "next/link";
 import pool from "@/lib/db";
 
 type OrderRow = {
@@ -63,7 +64,11 @@ export default async function SupplierOrdersPage() {
           <tbody>
             {orders.map((row, i) => (
               <tr key={i} className="hover:bg-gray-50">
-                <td className="border border-gray-300 p-3 text-gray-400">#{row.order_id}</td>
+                <td className="border border-gray-300 p-3">
+                  <Link href={`/supplier/orders/${row.order_id}`} className="text-blue-600 hover:underline">
+                    #{row.order_id}
+                  </Link>
+                </td>
                 <td className="border border-gray-300 p-3 text-sm">
                   {new Date(row.created_at).toLocaleString("ja-JP")}
                 </td>

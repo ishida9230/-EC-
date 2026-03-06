@@ -1,0 +1,15 @@
+# .claudeignore
+# このファイルの役割：
+# Claudeが読まないファイルを指定する。
+# 大量のファイルを除外することでトークン消費を抑え、
+# レスポンスを高速化する。
+
+node_modules
+.next
+dist
+build
+coverage
+.env
+.env.local
+.git
+*.lock

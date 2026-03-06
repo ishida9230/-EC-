@@ -77,7 +77,9 @@ export default async function OrdersPage() {
             <div key={order.id} className="border border-gray-300 rounded p-4">
               <div className="flex justify-between items-center mb-3">
                 <div>
-                  <span className="font-bold">注文 #{order.id}</span>
+                  <Link href={`/orders/${order.id}`} className="font-bold text-blue-600 hover:underline">
+                    注文 #{order.id}
+                  </Link>
                   <span className="ml-3 text-sm text-gray-500">
                     {new Date(order.created_at).toLocaleString("ja-JP")}
                   </span>

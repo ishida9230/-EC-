@@ -1,0 +1,20 @@
+{
+  "model": "claude-sonnet-4-6",
+  "temperature": 0.2,
+  "max_tokens": 4000,
+
+  "include": [
+    "src/**",
+    "package.json",
+    "README.md",
+    ".claude/**"
+  ],
+
+  "exclude": [
+    "node_modules/**",
+    ".next/**",
+    "dist/**",
+    "build/**",
+    ".git/**"
+  ]
+}

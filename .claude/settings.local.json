@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"/Users/ishidakouki/Desktop/建築ECシステム構築\" && export PATH=\"/opt/homebrew/opt/postgresql@16/bin:$PATH\" && timeout 30 npm run dev -- -p 3002 2>&1 || true)"
+    ]
+  }
+}
