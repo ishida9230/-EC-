@@ -26,6 +26,7 @@ export async function PATCH(
 }
 
 // DELETE /api/cart/item/:id — カートから削除
+// cart_itemsを削除後、カートが空になったらcartsも削除する
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -33,7 +34,28 @@ export async function DELETE(
   const { id } = await params;
 
   try {
+    // 削除前にcart_idを取得しておく
+    const itemResult = await pool.query(
+      `SELECT cart_id FROM cart_items WHERE id = $1`,
+      [id]
+    );
+    if (itemResult.rows.length === 0) {
+      return NextResponse.json({ error: "アイテムが見つかりません" }, { status: 404 });
+    }
+    const cartId = itemResult.rows[0].cart_id;
+
+    // cart_itemsを削除
     await pool.query(`DELETE FROM cart_items WHERE id = $1`, [id]);
+
+    // カートが空になったらcartsも削除
+    const remaining = await pool.query(
+      `SELECT id FROM cart_items WHERE cart_id = $1`,
+      [cartId]
+    );
+    if (remaining.rows.length === 0) {
+      await pool.query(`DELETE FROM carts WHERE id = $1`, [cartId]);
+    }
+
     return NextResponse.json({ message: "削除しました" });
   } catch (error) {
     console.error("DELETE /api/cart/item/:id エラー:", error);

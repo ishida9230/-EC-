@@ -1,6 +1,9 @@
 // T3: 商品詳細画面 /products/:id
+// Server ComponentからはDBを直接参照する（自己fetchは不要）
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import pool from "@/lib/db";
+import AddToCartButton from "./AddToCartButton";
 
 type Product = {
   id: number;
@@ -14,13 +17,28 @@ type Product = {
 };
 
 async function getProduct(id: string): Promise<Product | null> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/products/${id}`,
-    { cache: "no-store" }
+  const productId = parseInt(id, 10);
+  if (isNaN(productId)) return null;
+
+  const result = await pool.query(
+    `
+    SELECT
+      p.id,
+      p.name,
+      p.description,
+      p.material,
+      p.process_type,
+      p.price,
+      s.name AS supplier_name,
+      i.stock_quantity
+    FROM products p
+    LEFT JOIN suppliers s ON s.id = p.supplier_id
+    LEFT JOIN inventories i ON i.product_id = p.id
+    WHERE p.id = $1
+    `,
+    [productId]
   );
-  if (res.status === 404) return null;
-  if (!res.ok) return null;
-  return res.json();
+  return result.rows[0] || null;
 }
 
 export default async function ProductDetailPage({
@@ -74,17 +92,7 @@ export default async function ProductDetailPage({
         </tbody>
       </table>
 
-      {/* カートに追加ボタン（T4で機能実装） */}
-      <Link
-        href={`/cart?add=${product.id}`}
-        className={`inline-block px-6 py-3 rounded text-white ${
-          product.stock_quantity === 0
-            ? "bg-gray-400 pointer-events-none"
-            : "bg-blue-600 hover:bg-blue-700"
-        }`}
-      >
-        {product.stock_quantity === 0 ? "在庫なし" : "カートに追加"}
-      </Link>
+      <AddToCartButton productId={product.id} stockQuantity={product.stock_quantity} />
     </div>
   );
 }

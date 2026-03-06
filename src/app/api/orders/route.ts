@@ -59,11 +59,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // カートを空にする
+    // cart_itemsを削除後、cartsも削除する
     await client.query(
       `DELETE FROM cart_items WHERE cart_id IN (
          SELECT id FROM carts WHERE customer_id = $1
        )`,
+      [customerId]
+    );
+    await client.query(
+      `DELETE FROM carts WHERE customer_id = $1`,
       [customerId]
     );
 

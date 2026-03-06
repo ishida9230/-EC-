@@ -1,5 +1,7 @@
 // T2: 商品一覧画面 /products
+// Server ComponentからはDBを直接参照する（自己fetchは不要）
 import Link from "next/link";
+import pool from "@/lib/db";
 
 type Product = {
   id: number;
@@ -11,12 +13,19 @@ type Product = {
 };
 
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/products`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) return [];
-  return res.json();
+  const result = await pool.query(`
+    SELECT
+      p.id,
+      p.name,
+      p.material,
+      p.process_type,
+      p.price,
+      i.stock_quantity
+    FROM products p
+    LEFT JOIN inventories i ON i.product_id = p.id
+    ORDER BY p.id ASC
+  `);
+  return result.rows;
 }
 
 export default async function ProductsPage() {
